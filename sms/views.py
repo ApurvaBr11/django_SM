@@ -9,9 +9,18 @@ from django.urls import reverse
 # Create your views here.
 
 def home(r):
-    data = Notes.objects.all().order_by('-id')
     categories = Categories.objects.all().order_by('-id')
     recent_users = User.objects.order_by('-date_joined')[:6]
+
+    
+    if r.user.is_authenticated:
+        user_profile, _ = UserProfile.objects.get_or_create(user=r.user)
+        selected_categories = user_profile.selected_categories.all()
+        data = Notes.objects.filter(categories__in=selected_categories).distinct()
+    else:
+        data = Notes.objects.all().order_by('-id')
+        
+
     context = {'notes':data , 'categories':categories , 'recent_users':recent_users}
     return render(r, 'home.html',context )
 
@@ -45,7 +54,7 @@ def login_view(r):
             user = authenticate(r, username=username, password=password)
             if user is not None:
                 login(r, user)
-                return redirect('home')
+                return redirect(select_categories)
         else:
             error_message = 'Invalid username or password'
     else:
@@ -55,7 +64,7 @@ def login_view(r):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect(home)
 
 def view(r,id):
     note = Notes.objects.get(id = id)
@@ -173,3 +182,26 @@ def toggle_follow(request, user_id):
 
     # Optionally, redirect or return a response with the appropriate message
     return redirect(home)
+
+def select_categories(request):
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    selected_categories = user_profile.selected_categories.all()
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            user_profile.selected_categories.clear()
+            selected_categories = form.cleaned_data['categories']
+            user_profile.selected_categories.add(*selected_categories)
+            return redirect(home)
+    else:
+        initial_data = {'categories': selected_categories}
+        form = CategoryForm(initial=initial_data)
+
+    return render(request, 'select_categories.html', {'form': form})
+
+def user_feed(request):
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    selected_categories = user_profile.selected_categories.all()
+    blogs = Notes.objects.filter(categories__in=selected_categories).distinct()
+    return render(request, 'user_feed.html', {'blogs': blogs})

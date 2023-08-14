@@ -87,7 +87,7 @@
                 {% endif %}
             </div>
         </article>
-
+        {% if user.is_authenticated %}
         <div class="flex flex-col justify-center items-center text-left -mt-8">
             <form action="" method="post" class="md:w-[50%] w-[90%]">
                 {% csrf_token %}
@@ -97,6 +97,7 @@
                 </div>
             </form>
         </div>
+        {% endif %}
         <div class="flex flex-col max-h-[400px] mt-6 overflow-y-scroll  gap-5">
             {% for commentlist in commentlists %}
             <div class="flex  md:w-[40%] w-[80%]  mx-auto items-center justify-between px-5 py-1 bg-white rounded-md">

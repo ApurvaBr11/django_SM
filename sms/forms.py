@@ -11,3 +11,10 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment']
+
+
+class CategoryForm(forms.Form):
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Categories.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+    )

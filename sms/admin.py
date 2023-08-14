@@ -16,6 +16,7 @@ admin.site.register(Notes, NotesAdmin)
 admin.site.register(Categories)
 admin.site.register(Comment)
 admin.site.register(Follow)
+admin.site.register(UserProfile)
 admin.site.register(Like)
 admin.site.register(NotesShearing,NotesShearingAdmin)
  

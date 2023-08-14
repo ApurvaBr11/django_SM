@@ -27,6 +27,8 @@ urlpatterns = [
     re_path('^', include('django.contrib.auth.urls')),
     path('like/<int:student_id>/', like_student, name='like_student'),
     path('follow/<int:user_id>/', toggle_follow, name='toggle_follow'),
+    path('select_categories/', select_categories, name='select_categories'),
+
 
 ]
 

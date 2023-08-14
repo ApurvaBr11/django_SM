@@ -45,3 +45,10 @@ class Like(models.Model):
 class Follow(models.Model):
     followed_by = models.ForeignKey(User,on_delete=models.CASCADE , related_name='f_by')
     followed_to = models.ForeignKey(User,on_delete=models.CASCADE ,related_name='f_to')
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    selected_categories = models.ManyToManyField(Categories)
+
+    def __str__(self):
+        return self.user.username
